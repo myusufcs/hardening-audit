@@ -60,20 +60,32 @@ class EmptyPasswords(Check):
                         "semua akun punya password terisi", category=CATEGORY)]
 
 
+def _sudo_files() -> list[Path]:
+    """Kumpulkan berkas sudoers. Direktori yang tidak bisa dibaca dilewati
+    (mis. /etc/sudoers.d biasanya 750 root) — bukan error."""
+    files = [Path("/etc/sudoers")]
+    d = Path("/etc/sudoers.d")
+    try:
+        if d.is_dir():
+            files += [p for p in sorted(d.iterdir()) if p.is_file()]
+    except (PermissionError, OSError):
+        pass
+    return files
+
+
 class SudoNoPasswd(Check):
     CODE = "akses.sudo_nopasswd"
     TITLE = "Tidak ada aturan sudo NOPASSWD"
     CATEGORY = CATEGORY
 
     def run(self, ctx):
-        files = [Path("/etc/sudoers")]
-        d = Path("/etc/sudoers.d")
-        if d.is_dir():
-            files += [p for p in sorted(d.iterdir()) if p.is_file()]
+        files = _sudo_files()
         hits = []
+        unreadable = 0
         for f in files:
             text = read(f)
-            if not text:
+            if text is None:
+                unreadable += 1
                 continue
             for ln in text.splitlines():
                 s = ln.strip()
@@ -84,6 +96,11 @@ class SudoNoPasswd(Check):
             return [Finding(self.CODE, self.TITLE, Status.WARN, Severity.MEDIUM,
                             f"{len(hits)} aturan NOPASSWD — {hits[0]}",
                             "Pastikan hanya untuk otomasi yang benar-benar perlu.",
+                            category=CATEGORY)]
+        if unreadable:
+            return [Finding(self.CODE, self.TITLE, Status.SKIP, Severity.INFO,
+                            f"tidak bisa dibaca sebagai user biasa ({unreadable} berkas) — "
+                            "jalankan sebagai root untuk hasil pasti",
                             category=CATEGORY)]
         return [Finding(self.CODE, self.TITLE, Status.PASS, Severity.INFO,
                         "tidak ditemukan", category=CATEGORY)]

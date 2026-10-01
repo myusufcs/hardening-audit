@@ -122,6 +122,13 @@ class HomePermissions(Check):
                         "semua home sudah ketat", category=CATEGORY)]
 
 
+def _iter_files(root: Path):
+    """Iterasi berkas tanpa meledak saat ada direktori tanpa izin."""
+    for dirpath, dirnames, filenames in os.walk(root, onerror=lambda e: None):
+        for name in filenames:
+            yield Path(dirpath) / name
+
+
 class CronPermissions(Check):
     CODE = "berkas.cron"
     TITLE = "Berkas cron tidak bisa diubah user biasa"
@@ -132,7 +139,7 @@ class CronPermissions(Check):
         for d in (Path("/etc/cron.d"), Path("/etc/cron.hourly"), Path("/etc/cron.daily"),
                   Path("/etc/cron.weekly"), Path("/etc/cron.monthly"), Path("/var/spool/cron")):
             if d.is_dir():
-                targets += [p for p in d.rglob("*") if p.is_file()]
+                targets += list(_iter_files(d))
         bad = []
         for f in targets:
             try:
