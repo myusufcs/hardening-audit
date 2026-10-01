@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Hasil audit bisa memuat detail konfigurasi server — jangan di-commit
+reports/
+*.report.txt
+*.report.md
+*.report.json
+hardening-*.md
+hardening-*.json
+hardening-*.txt
+
+*.log
+.DS_Store
+.idea/
+.vscode/
