@@ -3,7 +3,7 @@
 **Audit baseline keamanan server** — satu perintah, temuan berprioritas, plus langkah perbaikannya.
 **Read-only**: tidak pernah mengubah konfigurasi sistem.
 
-[![CI](https://github.com/nullbyte12007/hardening-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/nullbyte12007/hardening-audit/actions/workflows/ci.yml)
+[![CI](https://github.com/myusufcs/hardening-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/myusufcs/hardening-audit/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Zero deps](https://img.shields.io/badge/dependencies-none-success)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -52,7 +52,7 @@ Tersedia tiga format: **teks** (terminal), **Markdown**, dan **JSON**.
 Tanpa dependensi Python — cukup standard library 3.10+.
 
 ```bash
-git clone https://github.com/nullbyte12007/hardening-audit
+git clone https://github.com/myusufcs/hardening-audit
 cd hardening-audit
 
 python3 -m hardening_audit                              # audit lengkap
